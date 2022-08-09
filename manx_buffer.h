@@ -2,25 +2,24 @@
 #define MANX_BUFFER_H__
 
 #include <cstddef>
-#include <cassert>
 #include <iterator>
 #include <array>
 
-template<typename EntryType, int N>
+template<typename T, int N>
 class ManxBuffer {
 public:
-    template <typename ManxBufferType, typename T> class Iterator {
+    template <typename ManxBufferType, typename EntryType> class Iterator {
     public:
         using difference_type = ptrdiff_t;
-        using value_type = T;
-        using reference = T&;
-        using pointer = T*;
+        using value_type = ;
+        using reference = EntryType&;
+        using pointer = EntryType*;
         using iterator_category = std::forward_iterator_tag;
 
         Iterator(ManxBufferType* manxBuffer, size_t pos)
             : manxBuffer_(manxBuffer)
             , pos_(pos) {}
-        T& operator*() const { return (manxBuffer_->buffer_)[pos_]; }
+        EntryType& operator*() const { return (manxBuffer_->buffer_)[pos_]; }
         Iterator& operator++() {
             ManxBuffer::advance(pos_);
             return *this;
@@ -56,7 +55,7 @@ public:
     [[nodiscard]] ConstIteratorType cbegin() const { return ConstIteratorType(this, ManxBuffer::successor(head_)); }
     [[nodiscard]] ConstIteratorType cend() const { return ConstIteratorType(this, head_); }
 
-    size_t capacity() const { return N; }
+    [[nodiscard]] constexpr size_t capacity() const { return N; }
 
     void add(const EntryType& item) {
         buffer_[head_] = item;
@@ -65,6 +64,7 @@ public:
 
 private:
     static constexpr size_t BUFSIZE = N + 1U;
+
     static size_t successor(size_t value) { return (value + 1) % BUFSIZE; }
     static void advance(size_t& value) { value = successor(value); }
 
