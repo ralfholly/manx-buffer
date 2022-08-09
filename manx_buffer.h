@@ -1,5 +1,5 @@
-#ifndef RING_BUFFER_H__
-#define RING_BUFFER_H__
+#ifndef MANX_BUFFER_H__
+#define MANX_BUFFER_H__
 
 #include <cstddef>
 #include <cassert>
@@ -7,9 +7,9 @@
 #include <array>
 
 template<typename EntryType, int N>
-class RingBuffer {
+class ManxBuffer {
 public:
-    template <typename RingBufferType, typename T> class Iterator {
+    template <typename ManxBufferType, typename T> class Iterator {
     public:
         using difference_type = ptrdiff_t;
         using value_type = T;
@@ -17,43 +17,43 @@ public:
         using pointer = T*;
         using iterator_category = std::forward_iterator_tag;
 
-        Iterator(RingBufferType* ringBuffer, size_t pos)
-            : ringBuffer_(ringBuffer)
+        Iterator(ManxBufferType* manxBuffer, size_t pos)
+            : manxBuffer_(manxBuffer)
             , pos_(pos) {}
-        T& operator*() const { return (ringBuffer_->buffer_)[pos_]; }
+        T& operator*() const { return (manxBuffer_->buffer_)[pos_]; }
         Iterator& operator++() {
-            RingBuffer::advance(pos_);
+            ManxBuffer::advance(pos_);
             return *this;
         }
         Iterator operator++(int) {
             auto old = *this;
-            RingBuffer::advance(pos_);
+            ManxBuffer::advance(pos_);
             return old;
         }
         bool operator==(const Iterator& rhs) const { return pos_ == rhs.pos_; }
         bool operator!=(const Iterator& rhs) const { return !(*this == rhs); }
 
     private:
-        RingBufferType* ringBuffer_;
+        ManxBufferType* manxBuffer_;
         size_t pos_;
     };
 
-    using IteratorType = Iterator<RingBuffer, EntryType>;
-    using ConstIteratorType = Iterator<const RingBuffer, const EntryType>;
+    using IteratorType = Iterator<ManxBuffer, EntryType>;
+    using ConstIteratorType = Iterator<const ManxBuffer, const EntryType>;
 
-    RingBuffer() = default;
+    ManxBuffer() = default;
 
-    explicit RingBuffer(const EntryType& initialValue) {
+    explicit ManxBuffer(const EntryType& initialValue) {
         std::fill(buffer_.begin(), buffer_.end(), initialValue);
     }
 
-    [[nodiscard]] IteratorType begin() { return IteratorType(this, RingBuffer::successor(head_)); }
+    [[nodiscard]] IteratorType begin() { return IteratorType(this, ManxBuffer::successor(head_)); }
     [[nodiscard]] IteratorType end() { return IteratorType(this, head_); }
 
-    [[nodiscard]] ConstIteratorType begin() const { return ConstIteratorType(this, RingBuffer::successor(head_)); }
+    [[nodiscard]] ConstIteratorType begin() const { return ConstIteratorType(this, ManxBuffer::successor(head_)); }
     [[nodiscard]] ConstIteratorType end() const { return ConstIteratorType(this, head_); }
 
-    [[nodiscard]] ConstIteratorType cbegin() const { return ConstIteratorType(this, RingBuffer::successor(head_)); }
+    [[nodiscard]] ConstIteratorType cbegin() const { return ConstIteratorType(this, ManxBuffer::successor(head_)); }
     [[nodiscard]] ConstIteratorType cend() const { return ConstIteratorType(this, head_); }
 
     size_t capacity() const { return N; }

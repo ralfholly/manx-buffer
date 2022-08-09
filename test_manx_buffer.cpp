@@ -1,4 +1,4 @@
-#include "ring_buffer.h"
+#include "manx_buffer.h"
 
 #include <iostream>
 #include <string>
@@ -13,82 +13,82 @@
 using namespace testing;
 
 namespace testing {
-namespace ring_buffer_test {
+namespace manx_buffer_test {
 
-TEST(ring_buffer, simple_instatiation) {
-    RingBuffer<int, 3> rg;
-    EXPECT_EQ(3U, rg.capacity());
+TEST(manx_buffer_test, simple_instatiation) {
+    ManxBuffer<int, 3> mb;
+    EXPECT_EQ(3U, mb.capacity());
 }
 
-TEST(ring_buffer, simple_add) {
-    RingBuffer<int, 3> rg;
-    rg.add(42);
-    auto it = rg.cbegin();
+TEST(manx_buffer_test, simple_add) {
+    ManxBuffer<int, 3> mb;
+    mb.add(42);
+    auto it = mb.cbegin();
     ASSERT_EQ(0, *it++);
     ASSERT_EQ(0, *it++);
     ASSERT_EQ(42, *it++);
-    ASSERT_EQ(it, rg.cend());
+    ASSERT_EQ(it, mb.cend());
 }
 
-TEST(ring_buffer, default_value) {
+TEST(manx_buffer_test, default_value) {
     static constexpr int defaultValue = -999;
-    RingBuffer<int, 3> rg{defaultValue};
-    rg.add(42);
-    auto it = rg.cbegin();
+    ManxBuffer<int, 3> mb{defaultValue};
+    mb.add(42);
+    auto it = mb.cbegin();
     ASSERT_EQ(defaultValue, *it++);
     ASSERT_EQ(defaultValue, *it++);
     ASSERT_EQ(42, *it++);
-    ASSERT_EQ(it, rg.cend());
+    ASSERT_EQ(it, mb.cend());
 }
 
-TEST(ring_buffer, multi_add) {
-    RingBuffer<int, 5> rg;
-    rg.add(1);
-    rg.add(2);
-    rg.add(3);
-    rg.add(4);
-    auto it = rg.cbegin();
+TEST(manx_buffer_test, multi_add) {
+    ManxBuffer<int, 5> mb;
+    mb.add(1);
+    mb.add(2);
+    mb.add(3);
+    mb.add(4);
+    auto it = mb.cbegin();
     ASSERT_EQ(0, *it++);
     ASSERT_EQ(1, *it++);
     ASSERT_EQ(2, *it++);
     ASSERT_EQ(3, *it++);
     ASSERT_EQ(4, *it++);
-    ASSERT_EQ(it, rg.cend());
+    ASSERT_EQ(it, mb.cend());
 }
 
-TEST(ring_buffer, multi_add_overflow) {
-    RingBuffer<int, 5> rg;
-    rg.add(1);
-    rg.add(2);
-    rg.add(3);
-    rg.add(4);
-    rg.add(5);
-    rg.add(6);
-    auto it = rg.cbegin();
+TEST(manx_buffer_test, multi_add_overflow) {
+    ManxBuffer<int, 5> mb;
+    mb.add(1);
+    mb.add(2);
+    mb.add(3);
+    mb.add(4);
+    mb.add(5);
+    mb.add(6);
+    auto it = mb.cbegin();
     ASSERT_EQ(2, *it++);
     ASSERT_EQ(3, *it++);
     ASSERT_EQ(4, *it++);
     ASSERT_EQ(5, *it++);
     ASSERT_EQ(6, *it++);
-    ASSERT_EQ(it, rg.cend());
+    ASSERT_EQ(it, mb.cend());
 }
 
-TEST(ring_buffer, iterator_constness) {
-    RingBuffer<int, 5> rg;
-    static_assert(std::is_const_v<std::remove_reference_t<decltype(*(rg.cbegin()))>>);
-    static_assert(std::is_const_v<std::remove_reference_t<decltype(*(rg.cend()))>>);
-    static_assert(!std::is_const_v<std::remove_reference_t<decltype(*(rg.begin()))>>);
-    static_assert(!std::is_const_v<std::remove_reference_t<decltype(*(rg.end()))>>);
+TEST(manx_buffer_test, iterator_constness) {
+    ManxBuffer<int, 5> mb;
+    static_assert(std::is_const_v<std::remove_reference_t<decltype(*(mb.cbegin()))>>);
+    static_assert(std::is_const_v<std::remove_reference_t<decltype(*(mb.cend()))>>);
+    static_assert(!std::is_const_v<std::remove_reference_t<decltype(*(mb.begin()))>>);
+    static_assert(!std::is_const_v<std::remove_reference_t<decltype(*(mb.end()))>>);
 
-    const RingBuffer<int, 5> crg;
+    const ManxBuffer<int, 5> crg;
     static_assert(std::is_const_v<std::remove_reference_t<decltype(*(crg.cbegin()))>>);
     static_assert(std::is_const_v<std::remove_reference_t<decltype(*(crg.cend()))>>);
     static_assert(std::is_const_v<std::remove_reference_t<decltype(*(crg.begin()))>>);
     static_assert(std::is_const_v<std::remove_reference_t<decltype(*(crg.end()))>>);
 }
 
-TEST(ring_buffer, basic_iterator_usage) {
-    RingBuffer<int, 3> rb;
+TEST(manx_buffer_test, basic_iterator_usage) {
+    ManxBuffer<int, 3> rb;
 
     rb.add(1);
     rb.add(2);
@@ -114,15 +114,15 @@ TEST(ring_buffer, basic_iterator_usage) {
     ASSERT_EQ(4, *it++);
 }
 
-TEST(ring_buffer, const_iterator_usage) {
-    RingBuffer<int, 3> rb;
+TEST(manx_buffer_test, const_iterator_usage) {
+    ManxBuffer<int, 3> rb;
 
     rb.add(1);
     rb.add(2);
     rb.add(3);
 
     auto it = rb.cbegin();
-    static_assert(std::is_same_v<RingBuffer<int, 3>::ConstIteratorType, decltype(it)>);
+    static_assert(std::is_same_v<ManxBuffer<int, 3>::ConstIteratorType, decltype(it)>);
 
     // Preincrement.
     ASSERT_EQ(1, *it);
@@ -143,8 +143,8 @@ TEST(ring_buffer, const_iterator_usage) {
     ASSERT_EQ(4, *it++);
 }
 
-TEST(ring_buffer, iterator_from_begin_to_end) {
-    RingBuffer<int, 3> rb;
+TEST(manx_buffer_test, iterator_from_begin_to_end) {
+    ManxBuffer<int, 3> rb;
 
     // Fill with overwrite.
     rb.add(1);
@@ -166,7 +166,7 @@ TEST(ring_buffer, iterator_from_begin_to_end) {
             ASSERT_EQ(4, *it);
             break;
         default:
-            ASSERT_TRUE(false) << "Unexpected ring buffer element";
+            ASSERT_TRUE(false) << "Unexpected manx buffer element";
         }
     }
 
@@ -184,13 +184,13 @@ TEST(ring_buffer, iterator_from_begin_to_end) {
             ASSERT_EQ(4, i);
             break;
         default:
-            ASSERT_TRUE(false) << "Unexpected ring buffer element";
+            ASSERT_TRUE(false) << "Unexpected manx buffer element";
         }
     }
 }
 
-TEST(ring_buffer, iterator_stl_usage) {
-    RingBuffer<int, 3> rb;
+TEST(manx_buffer_test, iterator_stl_usage) {
+    ManxBuffer<int, 3> rb;
 
     // Fill with overwrite.
     rb.add(1);
@@ -212,8 +212,8 @@ TEST(ring_buffer, iterator_stl_usage) {
     ASSERT_TRUE(std::all_of(rb.begin(), rb.end(), [](int i) { return i == 42; }));
 }
 
-TEST(ring_buffer, const_iterator_stl_usage) {
-    RingBuffer<int, 3> rb;
+TEST(manx_buffer_test, const_iterator_stl_usage) {
+    ManxBuffer<int, 3> rb;
 
     // Fill with overwrite.
     rb.add(1);
@@ -234,36 +234,36 @@ TEST(ring_buffer, const_iterator_stl_usage) {
     ASSERT_EQ(4, vec[2]);
 }
 
-TEST(ring_buffer, string_elements_empty_default) {
-    RingBuffer<std::string, 3> rg;
+TEST(manx_buffer_test, string_elements_empty_default) {
+    ManxBuffer<std::string, 3> mb;
     static const std::string someString = "One";
-    rg.add(someString);
-    auto it = rg.cbegin();
+    mb.add(someString);
+    auto it = mb.cbegin();
     ASSERT_EQ("", *it++);
     ASSERT_EQ("", *it++);
     ASSERT_EQ(someString, *it++);
-    ASSERT_EQ(it, rg.cend());
+    ASSERT_EQ(it, mb.cend());
 }
 
-TEST(ring_buffer, string_elements_empty_special_default_value) {
+TEST(manx_buffer_test, string_elements_empty_special_default_value) {
     static const std::string defaultValue = "empty";
-    RingBuffer<std::string, 3> rg{defaultValue};
+    ManxBuffer<std::string, 3> mb{defaultValue};
     static const std::string someString = "One";
-    rg.add(someString);
-    auto it = rg.cbegin();
+    mb.add(someString);
+    auto it = mb.cbegin();
     ASSERT_EQ(defaultValue, *it++);
     ASSERT_EQ(defaultValue, *it++);
     ASSERT_EQ(someString, *it++);
-    ASSERT_EQ(it, rg.cend());
+    ASSERT_EQ(it, mb.cend());
 }
 
-TEST(ring_buffer, copy_construction) {
-    RingBuffer<int, 3> rb1;
+TEST(manx_buffer_test, copy_construction) {
+    ManxBuffer<int, 3> rb1;
     rb1.add(1);
     rb1.add(2);
     rb1.add(3);
     rb1.add(4);
-    RingBuffer<int, 3> rb2(rb1);
+    ManxBuffer<int, 3> rb2(rb1);
     auto it1 = rb1.begin();
     auto it2 = rb2.begin();
     while (it1 != rb1.end()) {
@@ -273,5 +273,5 @@ TEST(ring_buffer, copy_construction) {
     ASSERT_EQ(rb2.end(), it2);
 }
 
-} // namespace ring_buffer
+} // namespace manx_buffer_test
 } // namespace testing

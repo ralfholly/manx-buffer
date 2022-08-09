@@ -4,7 +4,7 @@ $(error "Please define GOOGLE_TEST_HOME, ie. `make GOOGLE_TEST_HOME=~/googletest
 endif
 endif
 
-TARGET := test_ring_buffer
+TARGET := test_manx_buffer
 
 CC := g++
 GMOCK_INCLUDE_PATH = $(GOOGLE_TEST_HOME)/googlemock
@@ -23,7 +23,7 @@ override LDLIBS += -lgtest_main -lgtest -lgmock -lpthread
 
 all: test
 
-$(TARGET).o: $(TARGET).cpp ring_buffer.h
+$(TARGET).o: $(TARGET).cpp manx_buffer.h
 
 $(TARGET): $(TARGET).o
 
