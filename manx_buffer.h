@@ -11,7 +11,7 @@ public:
     template <typename ManxBufferType, typename EntryType> class Iterator {
     public:
         using difference_type = ptrdiff_t;
-        using value_type = ;
+        using value_type = EntryType;
         using reference = EntryType&;
         using pointer = EntryType*;
         using iterator_category = std::forward_iterator_tag;
@@ -37,12 +37,12 @@ public:
         size_t pos_;
     };
 
-    using IteratorType = Iterator<ManxBuffer, EntryType>;
-    using ConstIteratorType = Iterator<const ManxBuffer, const EntryType>;
+    using IteratorType = Iterator<ManxBuffer, T>;
+    using ConstIteratorType = Iterator<const ManxBuffer, const T>;
 
     ManxBuffer() = default;
 
-    explicit ManxBuffer(const EntryType& initialValue) {
+    explicit ManxBuffer(const T& initialValue) {
         std::fill(buffer_.begin(), buffer_.end(), initialValue);
     }
 
@@ -57,7 +57,7 @@ public:
 
     [[nodiscard]] constexpr size_t capacity() const { return N; }
 
-    void add(const EntryType& item) {
+    void add(const T& item) {
         buffer_[head_] = item;
         advance(head_);
     }
@@ -68,7 +68,7 @@ private:
     static size_t successor(size_t value) { return (value + 1) % BUFSIZE; }
     static void advance(size_t& value) { value = successor(value); }
 
-    std::array<EntryType, BUFSIZE> buffer_{};
+    std::array<T, BUFSIZE> buffer_{};
     size_t head_{0U};
 };
 
