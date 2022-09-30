@@ -251,8 +251,9 @@ TEST(manx_buffer_test, string_elements_empty_special_default_value) {
     static const std::string someString = "One";
     mb.add(someString);
     auto it = mb.cbegin();
-    ASSERT_EQ(defaultValue, *it++);
-    ASSERT_EQ(defaultValue, *it++);
+    while (it != mb.cend() && *it == defaultValue) {
+        ++it;
+    }
     ASSERT_EQ(someString, *it++);
     ASSERT_EQ(it, mb.cend());
 }
